@@ -24,28 +24,16 @@ class CPU:
             address = 0
             with open(self.program_filename) as f:
                 for line in f:
-                    # deal with comments
-                    # split before and after any comment symbol '#'
                     comment_split = line.split("#")
-
-                    # convert the pre-comment portion (to the left) from binary to a value
-                    # extract the first part of the split to a number variable
-                    # and trim whitespace
                     num = comment_split[0].strip()
 
-                    # ignore blank lines / comment only lines
                     if len(num) == 0:
                         continue
 
-                    # set the number to an integer of base 2
                     value = int(num, 2)
-                    # print the value in binary and in decimal
-                    # uncomment for debugging: print(f"{value:08b}: {value:d}")
 
-                    # add the value in to the memory at the index of address
                     self.ram[address] = value
 
-                    # increment the address
                     address += 1
 
         except FileNotFoundError:
