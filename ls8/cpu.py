@@ -109,5 +109,4 @@ class CPU:
 
 cpu = CPU()
 
-# cpu.load()
 cpu.run()
