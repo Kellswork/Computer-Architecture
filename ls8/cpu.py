@@ -1,6 +1,12 @@
 """CPU functionality."""
 import sys
 
+PRN = 0b01000111
+LDI = 0b10000010
+HLT = 0b00000001
+MUL = 0b10100010
+PUSH = 0b01000101
+POP = 0b01000110
 
 class CPU:
     """Main CPU class."""
@@ -10,7 +16,17 @@ class CPU:
         self.ram = [0] * 256
         self.reg = [0] * 8
         self.pc = 0
+        self.sp = 7
         self.program_filename = ''
+
+        # put methods on branch_table key=>pay dictionary to enable O(1) access inside run() loop
+        self.branch_table = {}
+        self.branch_table[PRN] = self.handle_prn
+        self.branch_table[LDI] = self.handle_ldi
+        self.branch_table[HLT] = self.handle_halt
+        self.branch_table[MUL] = self.handle_mul
+        self.branch_table[PUSH] = self.handle_push
+        self.branch_table[POP] = self.handle_pop
 
     def ram_read(self, addr):
         return self.ram[addr]
@@ -83,7 +99,7 @@ class CPU:
         if len(sys.argv) != 2:
             print("usage: cpy.py filename")
             sys.exit(1)
-
+        # Get program from file
         self.program_filename = sys.argv[1]
         self.load()
 
@@ -94,17 +110,8 @@ class CPU:
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
 
-            if IR == LDI:
-                self.reg[operand_a] = operand_b
-                self.pc += 3
-            elif IR == PRN:
-                print(self.reg[operand_a])
-                self.pc += 2
-            elif IR == MUL:
-                self.alu("MUL", operand_a, operand_b)
-                self.pc += 3
-            elif IR == HLT:
-                running = False
+            # call the method responsible for handling this instruction
+            self.branch_table[IR](operand_a, operand_b)
 
 
 cpu = CPU()
