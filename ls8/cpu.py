@@ -19,7 +19,7 @@ class CPU:
         self.pc = 0
         self.sp = 7
         self.program_filename = ''
-
+        self.running = True
         # put methods on branch_table key=>pay dictionary to enable O(1) access inside run() loop
         self.branch_table = {}
         self.branch_table[PRN] = self.handle_prn
@@ -138,9 +138,9 @@ class CPU:
         self.program_filename = sys.argv[1]
         self.load()
 
-        running = True
+        # running = True
 
-        while running:
+        while self.running:
             IR = self.ram[self.pc]
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
