@@ -138,7 +138,7 @@ class CPU:
         self.program_filename = sys.argv[1]
         self.load()
 
-        # running = True
+
 
         while self.running:
             IR = self.ram[self.pc]
