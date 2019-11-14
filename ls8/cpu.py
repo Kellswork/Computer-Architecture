@@ -8,6 +8,7 @@ MUL = 0b10100010
 PUSH = 0b01000101
 POP = 0b01000110
 
+
 class CPU:
     """Main CPU class."""
 
@@ -87,6 +88,40 @@ class CPU:
             print(" %02X" % self.reg[i], end='')
 
         print()
+
+    def handle_ldi(self, op_a, op_b):
+        self.reg[op_a] = op_b
+        self.pc += 3
+
+    def handle_prn(self, op_a, op_b):
+        print(self.reg[op_a])
+        self.pc += 2
+
+    def handle_mul(self, op_a, op_b):
+        self.alu("MUL", op_a, op_b)
+        self.pc += 3
+
+    def handle_push(self, op_a, op_b):
+        # EXECUTE
+        reg = self.ram_read(self.pc + 1)
+        val = self.reg[reg]
+        # PUSH
+        self.reg[self.sp] -= 1
+        self.ram_write(self.reg[self.sp], val)
+        self.pc += 2
+
+    def handle_pop(self, op_a, op_b):
+        # EXECUTE
+        # SETUP
+        reg = self.ram_read(self.pc + 1)
+        val = self.ram_read(self.reg[self.sp])
+        # POP
+        self.reg[reg] = val
+        self.reg[self.sp] += 1
+        self.pc += 2
+
+    def handle_halt(self, op_a, op_b):
+        self.running = False
 
     def run(self):
         """Run the CPU."""
